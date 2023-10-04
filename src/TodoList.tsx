@@ -1,9 +1,12 @@
 import React from 'react';
 import { useStore } from 'effector-react';
-import { $todos, toggleTodo, removeTodo } from './store/index'; 
+import { TodoModel } from './store/index';
+
+const { inputs, outputs } = TodoModel;
 
 const TodoList: React.FC= () => {
-  const todos = useStore($todos);
+  const todos = useStore(outputs.$todos);
+  const { removeTodo, toggleTodo } = inputs;
 
   return (
     <ul>

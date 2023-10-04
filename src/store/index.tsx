@@ -1,30 +1,26 @@
 import { createStore, createEvent, createEffect, sample } from 'effector';
-
-// Создаем события
-export const addTodo = createEvent<string>();
-export const removeTodo = createEvent<number>();
-export const toggleTodo = createEvent<number>();
-
-// Создаем эффект для сохранения данных о задачах в LocalStorage
-const saveTodosFx = createEffect((todos: Todo[]) => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-    return todos;
-  });
-
-// Тип данных для задачи
 type Todo = {
   id: number;
   text: string;
   completed: boolean;
 };
 
-// Создаем хранилище для списка задач
-export const $todos = createStore<Todo[]>(loadTodosFromLocalStorage());
+const addTodo = createEvent<string>();
+const removeTodo = createEvent<number>();
+const toggleTodo = createEvent<number>();
+
+// Эффект для сохранения данных о задачах в LocalStorage
+const saveTodosFx = createEffect((todos: Todo[]) => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+    return todos;
+  });
+
+// Хранилище для списка задач
+const $todos = createStore<Todo[]>(loadTodosFromLocalStorage());
 
 // Используем генератор уникальных id
 let nextTodoId = 1;
 
-// Определяем логику изменения состояния хранилия при добавлении и удалении задач
 $todos
   .on(addTodo, (todos, newText) => [
     ...todos,
@@ -65,3 +61,14 @@ sample({
 $todos.watch((todos) => {
   saveTodosFx(todos);
 });
+
+export const TodoModel = {
+  inputs: {
+    addTodo,
+    removeTodo,
+    toggleTodo,
+  },
+  outputs: {
+    $todos,
+  },
+};
